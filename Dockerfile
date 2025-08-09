@@ -1,12 +1,12 @@
 # Stage 1: Builder (not strictly needed for inference, but good practice)
-FROM python:3.9-slim as builder
+FROM python:3.11-slim as builder
 WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Stage 2: Inference server for SageMaker
-FROM python:3.9-slim
+FROM python:3.11-slim
 WORKDIR /app
 COPY --from=builder /app/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
