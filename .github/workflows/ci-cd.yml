@@ -1,0 +1,40 @@
+name: Churn Predictor CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-to-production:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Set up DVC
+        uses: iterative/setup-dvc@v1
+      
+      - name: Run DVC pipeline to retrain model
+        run: |
+          dvc pull
+          dvc repro -f
+          dvc push
+      
+      - name: Commit DVC lock file if changed
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git diff --quiet dvc.lock || (git add dvc.lock && git commit -m "chore: Update dvc.lock from automated run [skip ci]" && git push)
+      
+      - name: Trigger AWS CodeBuild for Docker build and deploy
+        uses: aws-actions/aws-codebuild-run-build@v1
+        with:
+          project-name: churn-predictor-build
