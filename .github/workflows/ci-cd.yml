@@ -3,7 +3,7 @@ name: Churn Predictor CI/CD
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   deploy-to-production:
