@@ -255,4 +255,3 @@ This project implements several MLOps concepts:
 - **Web Application Integration**: A live, interactive web app has been built with Streamlit and deployed to Streamlit Community Cloud for real-time predictions.
 - **Approval Workflow**: A model approval process is defined based on GitHub Pull Requests, where code and model performance metrics must be reviewed before merging to `master` and triggering a deployment.
 - **Incident Response**: A playbook has been designed to respond to CloudWatch alarms for high model latency or invocation errors, with a clear rollback strategy.
-
